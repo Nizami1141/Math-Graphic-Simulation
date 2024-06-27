@@ -3,10 +3,23 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from tkinter import *
 from tkinter import ttk
+import re
+
+def convert_symbols(expression):
+    # Replace "^" with "np.power" for raising to a power
+    expression = re.sub(r'(\d+|\w+)\s*\^\s*(\d+|\w+)', r'np.power(\1, \2)', expression)
+    # Replace "~" with "np.sqrt" for square root
+    expression = re.sub(r'~(\d+|\w+)', r'np.sqrt(\1)', expression)
+    
+    # Add trigonometric functions
+    expression = re.sub(r'\b(sin|cos|tan|asin|acos|atan|sinh|cosh|tanh|asinh|acosh|atanh)\b', r'np.\1', expression)
+    
+    return expression
 
 def simulate_2d():
     try:
         func_str = entry_2d.get()
+        func_str = convert_symbols(func_str)
         func = lambda x: eval(func_str)
         
         x = np.linspace(0, 10, 100)
@@ -29,16 +42,18 @@ def simulate_2d():
 def simulate_3d():
     try:
         func_str = entry_3d.get()
-        func = lambda x, y: eval(func_str)
+        func_str = convert_symbols(func_str)
+        func = lambda x, y, z: eval(func_str)
         
-        x = np.linspace(-5, 5, 50)
-        y = np.linspace(-5, 5, 50)
-        x, y = np.meshgrid(x, y)
-        z = func(x, y)
+        x = np.linspace(-5, 5, 30)
+        y = np.linspace(-5, 5, 30)
+        z = np.linspace(-5, 5, 30)
+        x, y, z = np.meshgrid(x, y, z)
+        w = func(x, y, z)
         
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_surface(x, y, z, cmap='viridis')
+        ax.plot_surface(x[:,:,0], y[:,:,0], w[:,:,0], cmap='viridis')
         
         ax.set_xlabel('X')
         ax.set_ylabel('Y')
@@ -90,7 +105,7 @@ entry_2d.pack(side=LEFT, padx=10)
 Button(frame_2d_input, text="Simulate", command=simulate_2d).pack(side=LEFT, padx=10)
 
 # Create Label and Entry for 3D function
-label_3d = Label(frame_3d_input, text="f(x, y) =")
+label_3d = Label(frame_3d_input, text="f(x, y, z) =")
 label_3d.pack(side=LEFT, padx=10)
 
 entry_3d = Entry(frame_3d_input, width=30)
