@@ -20,7 +20,7 @@ This repository contains a project that simulates mathematical functions similar
 
 ## Contact
 
-If you have checked out my project and liked it, or if you have any advice for improvement, feel free to reach out via email: **nizami_kuliyev@hotmail.com**.
+If you have checked out my project and liked it, or if you have any advice for improvement, feel free to reach out via email: **nizami2oo4kuliyev@gmail.com**.
 
 ---
 
